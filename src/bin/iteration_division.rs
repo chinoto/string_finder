@@ -2,13 +2,10 @@ use rayon::prelude::*;
 // Heap allocations are expensive and reusing string buffers gets complicated with threads.
 // Probably more efficient on CPU cache since the stack has to already be in there.
 use arrayvec::ArrayString;
+use string_finder::{STRLEN,get_chars};
 
 fn main() {
-    // chars don't have a range, but bytes do.
-    let chars=(b'a'..=b'z').map(char::from);
-    let charslen=chars.clone().count() as u64;
-    // Only test strings up to a max length of 20.
-    const STRLEN: usize=20;
+    let (chars, charslen)=get_chars();
 
     println!("{:?}",
         // All lengths that will be tested.
