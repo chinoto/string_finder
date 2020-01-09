@@ -4,8 +4,14 @@ version = "0.1.0"
 authors = ["Damian J Pound <damian@thebestisp.com>"]
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
 rayon="*"
 arrayvec="*"
+
+[profile.release]
+debug = true
+
+#Redundant for building, but necessary for Rust Language Server (or maybe just VS Code?).
+[[bin]]
+name='iteration_division'
+path='src/bin/iteration_division.rs'
