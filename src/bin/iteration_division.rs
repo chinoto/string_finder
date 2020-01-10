@@ -10,13 +10,12 @@ fn main() {
     println!("{:?}",
         // All lengths that will be tested.
         (0..=STRLEN)
-            .into_par_iter()
             // For each STRLEN, get all possible iterations of that length
             .flat_map(|strlen| {
                 (0..charslen.pow(strlen as u32))
-                    .into_par_iter()
                     .map(move |i| (strlen,i))
             })
+            .par_bridge()
             .map(|(strlen, mut i)| {
                 let mut string=ArrayString::<[_; STRLEN]>::new();
                 // Divide the iteration index to get each character index
