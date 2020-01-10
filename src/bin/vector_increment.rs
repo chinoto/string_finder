@@ -10,16 +10,28 @@ fn main() {
     println!("{:?}",
         // All lengths that will be tested.
         (0..=STRLEN)
-            .into_par_iter()
+            .into_iter()
             // For each STRLEN, get all possible iterations of that length
             .flat_map(|strlen| {
                 let mut counter=ArrayVec::<[usize; STRLEN]>::from([0; STRLEN]);
                 //strlen is always <=STRLEN
                 unsafe {counter.set_len(strlen);}
-                (0..charslen.pow(strlen as u32))
+                let max=if strlen>0 {charslen as usize} else {1};
+                (0..max)
+                    .into_iter()
+                    .map(move |i| {
+                        let mut counter=counter.clone();
+                        if let Some(elem)=counter.iter_mut().nth(0) {*elem=i;}
+                        counter
+                    })
+            })
+            .par_bridge()
+            .flat_map(|counter| {
+                let max=if counter.len()>1 {charslen.pow(counter.len() as u32-1)} else {1};
+                (0..max)
                     .scan(counter, |acc, _| {
                         let ret=Some(acc.clone());
-                        for i in acc.iter_mut() {
+                        for i in acc.iter_mut().skip(1) {
                             *i+=1;
                             assert!(*i<=charslen as usize);
                             if *i==charslen as usize {*i=0;}
