@@ -12,12 +12,21 @@ fn main() {
         (0..=STRLEN)
             // For each STRLEN, get all possible iterations of that length
             .flat_map(|strlen| {
-                (0..charslen.pow(strlen as u32))
-                    .map(move |i| (strlen,i))
+                chars
+                    .clone()
+                    .map(move |c| {
+                        let mut string=ArrayString::<[_; STRLEN]>::new();
+                        string.push(c);
+                        (strlen-1, string)
+                    })
             })
             .par_bridge()
-            .map(|(strlen, mut i)| {
-                let mut string=ArrayString::<[_; STRLEN]>::new();
+            .flat_map(|(strlen, string)| {
+                (0..charslen.pow(strlen as u32))
+                    .into_par_iter()
+                    .map(move |i| (strlen, i, string))
+            })
+            .map(|(strlen, mut i, mut string)| {
                 // Divide the iteration index to get each character index
                 for _ in 0..strlen {
                     let (quot,rem)=div_rem(i, charslen);
