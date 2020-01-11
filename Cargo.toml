@@ -7,6 +7,7 @@ edition = "2018"
 [dependencies]
 rayon="*"
 arrayvec="*"
+strength_reduce="*"
 
 [profile.release]
 debug = true

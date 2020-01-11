@@ -2,10 +2,12 @@ use rayon::prelude::*;
 // Heap allocations are expensive and reusing string buffers gets complicated with threads.
 // Probably more efficient on CPU cache since the stack has to already be in there.
 use arrayvec::ArrayString;
-use string_finder::{STRLEN,get_chars};
+use strength_reduce::StrengthReducedU64;
+use string_finder::{STRLEN, get_chars};
 
 fn main() {
     let (chars, charslen)=get_chars();
+    let charslen_div=StrengthReducedU64::new(charslen);
 
     println!("{:?}",
         // All lengths that will be tested.
@@ -29,7 +31,7 @@ fn main() {
             .map(|(strlen, mut i, mut string)| {
                 // Divide the iteration index to get each character index
                 for _ in 0..strlen {
-                    let (quot,rem)=div_rem(i, charslen);
+                    let (quot, rem)=StrengthReducedU64::div_rem(i, charslen_div);
                     i=quot;
                     string.push(chars.clone().nth(rem as usize).unwrap());
                 }
@@ -37,9 +39,4 @@ fn main() {
             })
             .find_any(|string| string.as_str()=="passw")
     );
-}
-
-// This will hopefully give the quotient and remainder in one instruction
-fn div_rem(x: u64, y: u64) -> (u64, u64) {
-    (x/y, x%y)
 }
