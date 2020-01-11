@@ -20,3 +20,7 @@ path='src/bin/iteration_division.rs'
 [[bin]]
 name='vector_increment'
 path='src/bin/vector_increment.rs'
+
+[[bin]]
+name='for_flat_map'
+path='src/bin/for_flat_map.rs'
