@@ -34,7 +34,7 @@ fn main() {
 				for _ in 0..strlen {
 					iter=Box::new(iter.flat_map(|string| {
 						chars.clone().map(move |c| {
-							let mut string=string.clone();
+							let mut string=string;
 							string.push(c);
 							string
 						})
