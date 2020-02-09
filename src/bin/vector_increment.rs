@@ -35,9 +35,9 @@ fn main() {
                     1
                 };
                 (0..max)
-                    .scan(counter, |acc, _| {
-                        let ret = Some(acc.clone());
-                        for i in acc.iter_mut().skip(1) {
+                    .scan(counter, |counter, _| {
+                        let ret = Some(counter.clone());
+                        for i in counter.iter_mut().skip(1) {
                             *i += 1;
                             assert!(*i <= charslen as usize);
                             if *i == charslen as usize {
@@ -53,9 +53,9 @@ fn main() {
             .map(|counter| {
                 counter
                     .into_iter()
-                    .fold(ArrayString::<[_; STRLEN]>::new(), |mut acc, i| {
-                        acc.push(chars.clone().nth(i).unwrap());
-                        acc
+                    .fold(ArrayString::<[_; STRLEN]>::new(), |mut string, i| {
+                        string.push(chars.clone().nth(i).unwrap());
+                        string
                     })
             })
             .find_any(|string| string.as_str() == "passw")
