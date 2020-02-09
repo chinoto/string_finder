@@ -21,7 +21,7 @@ fn main() {
                 let max = if strlen > 0 { charslen as usize } else { 1 };
                 (0..max).map(move |i| {
                     let mut counter = counter.clone();
-                    if let Some(elem) = counter.iter_mut().nth(0) {
+                    if let Some(elem) = counter.first_mut() {
                         *elem = i;
                     }
                     counter
