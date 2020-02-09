@@ -5,12 +5,13 @@ use arrayvec::ArrayString;
 // Either allows avoiding a box in the first flat_map,
 // though it doesn't make a noticeable difference to performance.
 use either::Either;
-use string_finder::{STRLEN, get_chars};
+use string_finder::{get_chars, STRLEN};
 
 fn main() {
-	let (chars, _)=get_chars();
+	let (chars, _) = get_chars();
 
-	println!("{:?}",
+	println!(
+		"{:?}",
 		// All lengths that will be tested.
 		(0..=STRLEN)
 			// For each STRLEN, get all possible iterations of that length
@@ -28,13 +29,13 @@ fn main() {
 			.par_bridge()
 			.flat_map(|(strlen, string): (usize, ArrayString<[_; 20]>)| {
 				// Type must be specified, otherwise the compiler looks for a struct instead of trait.
-				let mut iter: Box<dyn Send+Iterator<Item=ArrayString<_>>>
-					=Box::new(std::iter::once(string));
+				let mut iter: Box<dyn Send + Iterator<Item = ArrayString<_>>> =
+					Box::new(std::iter::once(string));
 
 				for _ in 0..strlen {
-					iter=Box::new(iter.flat_map(|string| {
+					iter = Box::new(iter.flat_map(|string| {
 						chars.clone().map(move |c| {
-							let mut string=string;
+							let mut string = string;
 							string.push(c);
 							string
 						})
@@ -43,6 +44,6 @@ fn main() {
 
 				iter.par_bridge()
 			})
-			.find_any(|string| string.as_str()=="passw")
+			.find_any(|string| string.as_str() == "passw")
 	);
 }
